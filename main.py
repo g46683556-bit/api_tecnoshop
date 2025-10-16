@@ -21,9 +21,17 @@ async def chatbot_endpoint(data: ChatbotInput, x_api_key: str = Header(None)):
     if x_api_key != CHATBOT_API_KEY:
         raise HTTPException(status_code=401, detail="Invalid API Key")
 
+    query = data.mensaje.strip().lower()
+
+    # 🔍 Si el usuario pide ofertas
+    if "oferta" in query or "descuento" in query or "promoción" in query:
+        endpoint = f"{DJANGO_API_URL}/api/productos/?ofertas=true"
+    else:
+        endpoint = f"{DJANGO_API_URL}/api/productos/?q={query}"
+
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{DJANGO_API_URL}/api/productos/?q={data.mensaje}")
+            response = await client.get(endpoint)
             response.raise_for_status()
             productos = response.json()
     except Exception as e:
@@ -37,7 +45,9 @@ async def chatbot_endpoint(data: ChatbotInput, x_api_key: str = Header(None)):
         {
             "id": p["id"],
             "nombre": p["name"],
-            "precio": p["price"],
+            "precio_original": p["price"],
+            "precio_final": p["final_price"],
+            "descuento": p["discount_percent"],
             "imagen": p["image_url"],
             "categoria": p["category"],
         }
@@ -46,5 +56,5 @@ async def chatbot_endpoint(data: ChatbotInput, x_api_key: str = Header(None)):
 
     return {
         "productos": productos_formateados,
-        "mensaje": f"Tenemos {len(productos_formateados)} producto(s) relacionados con tu búsqueda."
+        "mensaje": f"Tenemos {len(productos_formateados)} producto(s) {'en oferta' if 'oferta' in query else 'relacionados con tu búsqueda'}."
     }
