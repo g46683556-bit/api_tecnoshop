@@ -1,0 +1,23 @@
+# Ignorar archivos de caché de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ignorar entornos virtuales
+venv/
+.env/
+
+# Ignorar migraciones de Django
+**/migrations/*
+!**/migrations/__init__.py
+
+# Ignorar caches de Python
+__pycache__/
+*.py[cod]
+
+# Base de datos de Django (no se debería versionar)
+db.sqlite3
+
+# Migraciones (excepto __init__.py)
+**/migrations/*
+!**/migrations/__init__.py

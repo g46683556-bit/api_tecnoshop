@@ -103,7 +103,6 @@ Recibe un mensaje del chatbot, consulta la API de productos de Django y devuelve
 ```json
 {
   "mensaje": "laptop",
-  "user_id": "usuario_123"
 }
 ```
 #### 🔹 Ejemplo de respuesta (éxito)
